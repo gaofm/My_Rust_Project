@@ -1,16 +1,17 @@
 fn main() {
     //变量和数据交互的方式：移动（Move） String版本
-    // 一个string由三部分构成分别是：①存放字符串内容的指针，②长度，③容量。数据是被存放在栈中，存储的字符串具体内容是存放在堆当中。
+    // 一个string由三部分构成分别是：①存放字符串内容的指针，②长度，③容量。数据2 3是被存放在栈stack中，存储的字符串具体内容1是存放在堆heap当中。
     let s1 = String::from("hello");
     //将s1复制给s2，当变量离开作用域时Rust会自动调用drop函数，释放相应的栈内存，当s1和s2同时离开作用域时会尝试释放相同的内存，从而引起：“二次释放（double free）bug”
     let s2 = s1;
     print!("s2:{}", s2);
-    //Rust为了保证内存安全，不会尝试复制被分配的内存，rust会让s1失效，当s1离开作用域师Rust不会释放任何东西，当s1被赋值给其他变量时会使得s1失效，无法被调用
-    println!("{}",s1);//报错，提示信息为：借用了移动的值
+    //Rust为了保证内存安全，不会尝试复制被分配的内存，rust会让s1失效，当s1离开作用域师Rust不会释放任何东西，当s1被赋值给其他变量时会使得s1失效，无法被调用 println!("{}",s1);//报错，提示信息为：借用了移动的值
 
     //浅拷贝 (Shallow Copy)
     //浅拷贝指的是只复制数据的指针或引用，而不复制实际数据本身。在 Rust 中，当你将某些类型（如 String 或 Vec）的值赋值给另一个变量时，会发生 所有权转移（move）
 
+
+     
     //深拷贝 (Deep Copy)
     //深拷贝会复制实际的数据，而不仅仅是指针或引用。深拷贝会分配新的内存，并将数据复制到新地址，在rust当中使用的是clone来进行深拷贝。
     let t1: String = String::from("hello,world!!!");
@@ -43,6 +44,31 @@ fn main() {
     makes_copy(w2);
 
     println!("w2:{}",w2);
+
+
+let g1 = gives_ownerships();
+
+let g2 = String::from("hello");
+
+let g3 = takes_and_gives_back(g2);
+
+println!("{}{}",g1,g3);
+
+
+let t1 = String::from("hello");
+let t2 = calculate_length(&t1);
+print!("t1:{}",t1);
+println!("t1字符长度为:{}",t2);
+//&是指针，成为借用，用来 借用 别的值，被借用的值不会发生移动，所有权不改变
+
+// 如果修改借用内容，需增加mut，说明指针可变
+let mut w1 = String::from("hello");
+let w2 = calculate_length1(&mut w1);
+print!("w1:{}",w1);
+println!("w1字符长度为:{}",w2);
+
+
+
 }
 
 fn take_ownership(some_string: String) {
@@ -52,3 +78,24 @@ fn take_ownership(some_string: String) {
 fn makes_copy(some_number: i32) {
     println!("some_number:{}", some_number);
 }
+
+ fn gives_ownerships() -> String{
+    let some_string = String::from("hello");
+    some_string
+ }
+
+ fn takes_and_gives_back(a_string: String)-> String{
+    a_string
+ }
+
+ fn calculate_length(w: &String)-> usize {
+    w.len()
+}
+ 
+
+ fn calculate_length1(w: &mut String)-> usize {
+    w.push_str(",哈哈");
+    w.len()
+
+}
+     
